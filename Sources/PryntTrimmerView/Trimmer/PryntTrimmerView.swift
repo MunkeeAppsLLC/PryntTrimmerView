@@ -97,7 +97,7 @@ fileprivate class PositionBar: UIView {
     private var rightConstraint: NSLayoutConstraint?
     private var positionConstraint: NSLayoutConstraint?
 
-    public let handleWidth: CGFloat = 16
+    public let handleWidth: CGFloat = 10
 
     /// The maximum duration allowed for the trimming. Change it before setting the asset, as the asset preview
     public override var maxDuration: Double {
@@ -113,8 +113,8 @@ fileprivate class PositionBar: UIView {
 
     override func setupSubviews() {
         super.setupSubviews()
-        layer.cornerRadius = 2
-        layer.masksToBounds = true
+        
+//        layer.masksToBounds = true
         backgroundColor = UIColor.clear
         layer.zPosition = 1
         setupTrimmerView()
@@ -126,17 +126,25 @@ fileprivate class PositionBar: UIView {
         updateHandleColor()
 
     }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        assetPreview.layer.cornerRadius = 16
+        trimView.layer.cornerRadius = 16
+        leftMaskView.addRoundedCorners(.left, cornerRadius: 16)
+        rightMaskView.addRoundedCorners(.right, cornerRadius: 16)
+    }
 
     override func constrainAssetPreview() {
-        assetPreview.leftAnchor.constraint(equalTo: leftAnchor, constant: handleWidth).isActive = true
-        assetPreview.rightAnchor.constraint(equalTo: rightAnchor, constant: -handleWidth).isActive = true
+        assetPreview.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        assetPreview.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         assetPreview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         assetPreview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
 
     private func setupTrimmerView() {
-        trimView.layer.borderWidth = 2.0
-        trimView.layer.cornerRadius = 2.0
+        trimView.layer.borderWidth = 4.0
+        trimView.backgroundColor = .clear
         trimView.translatesAutoresizingMaskIntoConstraints = false
         trimView.isUserInteractionEnabled = false
         addSubview(trimView)
@@ -152,16 +160,13 @@ fileprivate class PositionBar: UIView {
     private func setupHandleView() {
 
         leftHandleView.isUserInteractionEnabled = true
-        if #available(iOS 11.0, *) {
-            leftHandleView.layer.cornerRadius = 8.0
-            leftHandleView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-        }
+        leftHandleView.layer.cornerRadius = 5.0
         leftHandleView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(leftHandleView)
 
-        leftHandleView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
+        leftHandleView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.6).isActive = true
         leftHandleView.widthAnchor.constraint(equalToConstant: handleWidth).isActive = true
-        let leftHandleViewConstraint = leftHandleView.leftAnchor.constraint(equalTo: trimView.leftAnchor)
+        let leftHandleViewConstraint = leftHandleView.centerXAnchor.constraint(equalTo: trimView.leftAnchor)
         leftHandleViewConstraint.priority = UILayoutPriority(999)
         leftHandleViewConstraint.isActive = true
         leftHandleView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
@@ -169,23 +174,21 @@ fileprivate class PositionBar: UIView {
         leftHandleKnob.translatesAutoresizingMaskIntoConstraints = false
         leftHandleView.addSubview(leftHandleKnob)
 
-        leftHandleKnob.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.33).isActive = true
+        leftHandleKnob.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3).isActive = true
         leftHandleKnob.widthAnchor.constraint(equalToConstant: 3).isActive = true
         leftHandleKnob.centerYAnchor.constraint(equalTo: leftHandleView.centerYAnchor).isActive = true
         leftHandleKnob.centerXAnchor.constraint(equalTo: leftHandleView.centerXAnchor).isActive = true
         leftHandleKnob.layer.cornerRadius = 2
 
         rightHandleView.isUserInteractionEnabled = true
-        if #available(iOS 11.0, *) {
-            rightHandleView.layer.cornerRadius = 8.0
-            rightHandleView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-        }
+        rightHandleView.layer.cornerRadius = 5.0
+        
         rightHandleView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(rightHandleView)
 
-        rightHandleView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
+        rightHandleView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.6).isActive = true
         rightHandleView.widthAnchor.constraint(equalToConstant: handleWidth).isActive = true
-        let rightHandleViewConstraint = rightHandleView.rightAnchor.constraint(equalTo: trimView.rightAnchor)
+        let rightHandleViewConstraint = rightHandleView.centerXAnchor.constraint(equalTo: trimView.rightAnchor)
         rightHandleViewConstraint.priority = UILayoutPriority(999)
         rightHandleViewConstraint.isActive = true
         rightHandleView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
@@ -193,7 +196,7 @@ fileprivate class PositionBar: UIView {
         rightHandleKnob.translatesAutoresizingMaskIntoConstraints = false
         rightHandleView.addSubview(rightHandleKnob)
 
-        rightHandleKnob.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.33).isActive = true
+        rightHandleKnob.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3).isActive = true
         rightHandleKnob.widthAnchor.constraint(equalToConstant: 3).isActive = true
         rightHandleKnob.centerYAnchor.constraint(equalTo: rightHandleView.centerYAnchor).isActive = true
         rightHandleKnob.centerXAnchor.constraint(equalTo: rightHandleView.centerXAnchor).isActive = true
@@ -230,15 +233,15 @@ fileprivate class PositionBar: UIView {
         positionBar.frame = CGRect(x: 0, y: 0, width: 4, height: frame.height)
         positionBar.backgroundColor = positionBarColor
         positionBar.center = CGPoint(x: leftHandleView.frame.maxX, y: center.y)
-        positionBar.layer.cornerRadius = 3
+        positionBar.layer.cornerRadius = 2
         positionBar.translatesAutoresizingMaskIntoConstraints = false
         positionBar.isUserInteractionEnabled = true
         addSubview(positionBar)
 
         positionBar.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         positionBar.widthAnchor.constraint(equalToConstant: 4).isActive = true
-        positionBar.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
-        positionConstraint = positionBar.leftAnchor.constraint(equalTo: leftHandleView.rightAnchor, constant: 0)
+        positionBar.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.2).isActive = true
+        positionConstraint = positionBar.leftAnchor.constraint(equalTo: leftHandleView.rightAnchor)
         positionConstraint?.isActive = true
     }
 
@@ -308,7 +311,7 @@ fileprivate class PositionBar: UIView {
             updateSelectedTime(stoppedMoving: false)
         case .changed:
             let translation = gestureRecognizer.translation(in: superView)
-            let maxConstraint = rightHandleView.frame.origin.x - rightHandleView.frame.width - positionBar.frame.width
+            let maxConstraint = rightHandleView.frame.origin.x
             let minConstraint: CGFloat = 0
 
             let translatedConstraint = currentPositionConstraint + translation.x
@@ -334,13 +337,13 @@ fileprivate class PositionBar: UIView {
     }
 
     private func updateLeftConstraint(with translation: CGPoint) {
-        let maxConstraint = max(rightHandleView.frame.origin.x - handleWidth - minimumDistanceBetweenHandle, 0)
+        let maxConstraint = max(rightHandleView.frame.origin.x - minimumDistanceBetweenHandle, 0)
         let newConstraint = min(max(0, currentLeftConstraint + translation.x), maxConstraint)
         leftConstraint?.constant = newConstraint
     }
 
     private func updateRightConstraint(with translation: CGPoint) {
-        let maxConstraint = min(2 * handleWidth - frame.width + leftHandleView.frame.origin.x + minimumDistanceBetweenHandle, 0)
+        let maxConstraint = min(handleWidth - frame.width + leftHandleView.frame.origin.x + minimumDistanceBetweenHandle, 0)
         let newConstraint = max(min(0, currentRightConstraint + translation.x), maxConstraint)
         rightConstraint?.constant = newConstraint
     }
@@ -390,8 +393,7 @@ fileprivate class PositionBar: UIView {
     /// Move the position bar to the given time.
     public func seek(to time: CMTime) {
         if let newPosition = getPosition(from: time) {
-
-            let offsetPosition = newPosition - assetPreview.contentOffset.x - leftHandleView.frame.origin.x
+            let offsetPosition = newPosition - assetPreview.contentOffset.x - (leftHandleView.frame.origin.x + leftHandleView.frame.width)
             let maxPosition = rightHandleView.frame.origin.x - (leftHandleView.frame.origin.x + handleWidth)
                               - positionBar.frame.width
             let normalizedPosition = min(max(0, offsetPosition), maxPosition)
@@ -408,7 +410,7 @@ fileprivate class PositionBar: UIView {
 
     /// The selected end time for the current asset.
     public var endTime: CMTime? {
-        let endPosition = rightHandleView.frame.origin.x + assetPreview.contentOffset.x - handleWidth
+        let endPosition = rightHandleView.frame.origin.x + assetPreview.contentOffset.x
         return getTime(from: endPosition)
     }
 
@@ -424,7 +426,7 @@ fileprivate class PositionBar: UIView {
     }
 
     private var positionBarTime: CMTime? {
-        let barPosition = positionBar.frame.origin.x + assetPreview.contentOffset.x - handleWidth
+        let barPosition = positionBar.frame.origin.x + assetPreview.contentOffset.x + handleWidth * 0.5
         return getTime(from: barPosition)
     }
 
@@ -447,5 +449,53 @@ fileprivate class PositionBar: UIView {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateSelectedTime(stoppedMoving: false)
         scrollDelegate?.scrollDidMove(scrollView.contentOffset)
+    }
+    
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let hitFrame = bounds.insetBy(dx: -10, dy: -10)
+        return hitFrame.contains(point) ? super.hitTest(point, with: event) : nil
+    }
+    
+    public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let hitFrame = bounds.insetBy(dx: -10, dy: -10)
+        return hitFrame.contains(point)
+    }
+}
+
+
+extension UIView {
+    
+    enum RoundedCornerSide {
+        case left
+        case right
+    }
+    
+    func addRoundedCorners(_ side: RoundedCornerSide, cornerRadius: CGFloat) {
+        let maskLayer = CAShapeLayer()
+        maskLayer.frame = self.bounds
+        
+        let path = CGMutablePath()
+        let width = self.bounds.width
+        let height = self.bounds.height
+        
+        switch side {
+            case .left:
+                path.addArc(center: CGPoint(x: cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: CGFloat.pi, endAngle: CGFloat.pi * 1.5, clockwise: false)
+                path.addLine(to: CGPoint(x: width, y: 0))
+                path.addLine(to: CGPoint(x: width, y: height))
+                path.addLine(to: CGPoint(x: cornerRadius, y: height))
+                path.addArc(center: CGPoint(x: cornerRadius, y: height - cornerRadius), radius: cornerRadius, startAngle: CGFloat.pi * 0.5, endAngle: CGFloat.pi, clockwise: false)
+            case .right:
+                path.move(to: CGPoint(x: 0, y: 0))
+                path.addLine(to: CGPoint(x: width - cornerRadius, y: 0))
+                path.addArc(center: CGPoint(x: width - cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: CGFloat.pi * 1.5, endAngle: 0, clockwise: false)
+                path.addLine(to: CGPoint(x: width, y: height - cornerRadius))
+                path.addArc(center: CGPoint(x: width - cornerRadius, y: height - cornerRadius), radius: cornerRadius, startAngle: 0, endAngle: CGFloat.pi * 0.5, clockwise: false)
+                path.addLine(to: CGPoint(x: 0, y: height))
+        }
+        
+        path.closeSubpath()
+        maskLayer.path = path
+        self.layer.mask = maskLayer
     }
 }

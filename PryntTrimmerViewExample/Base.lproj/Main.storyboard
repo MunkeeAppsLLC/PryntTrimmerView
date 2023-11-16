@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina5_9" orientation="portrait" appearance="dark"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cRa-1R-GZG" userLabel="Player View">
-                                <rect key="frame" x="16" y="44" width="343" height="554"/>
+                                <rect key="frame" x="16" y="50" width="343" height="548"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qFP-ui-lpU" customClass="TrimmerView" customModule="PryntTrimmerView">
@@ -31,16 +31,16 @@
                             <view alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YaM-S0-qXi" userLabel="Bottom View">
                                 <rect key="frame" x="0.0" y="734" width="375" height="44"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lKA-lv-1M3">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lKA-lv-1M3">
                                         <rect key="frame" x="56" y="7" width="30" height="30"/>
                                         <state key="normal" title="Play">
-                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleColor" systemColor="darkTextColor"/>
                                         </state>
                                         <connections>
                                             <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="G4X-kd-YER"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Q0-Fn-7gy" userLabel="Select Asset Button">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Q0-Fn-7gy" userLabel="Select Asset Button">
                                         <rect key="frame" x="262" y="7" width="57" height="30"/>
                                         <state key="normal" title="Random">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -111,46 +111,46 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hiW-hO-WLc" customClass="VideoCropView" customModule="PryntTrimmerView">
-                                <rect key="frame" x="0.0" y="96" width="375" height="375"/>
+                                <rect key="frame" x="0.0" y="102" width="375" height="375"/>
                                 <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="hiW-hO-WLc" secondAttribute="height" multiplier="1:1" id="HRH-gq-Gxy"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C6Q-PX-RZD">
-                                <rect key="frame" x="0.0" y="471" width="375" height="307"/>
+                                <rect key="frame" x="0.0" y="477" width="375" height="301"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DhY-lH-ufy" customClass="ThumbSelectorView" customModule="PryntTrimmerView">
-                                        <rect key="frame" x="32" y="122.33333333333336" width="311" height="62.333333333333329"/>
+                                        <rect key="frame" x="32" y="119.33333333333336" width="311" height="62.333333333333329"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="DhY-lH-ufy" secondAttribute="height" multiplier="5:1" id="szd-xB-Kbk"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="P1n-Pq-Gqp">
-                                        <rect key="frame" x="0.0" y="263" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="257" width="375" height="44"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KGQ-Qr-vw6">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KGQ-Qr-vw6">
                                                 <rect key="frame" x="76" y="7" width="34" height="30"/>
                                                 <state key="normal" title="Load">
-                                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="titleColor" systemColor="darkTextColor"/>
                                                 </state>
                                                 <connections>
                                                     <action selector="selectAsset:" destination="S11-TT-8A3" eventType="touchUpInside" id="jxq-Lr-ubL"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Tf-hJ-oj2">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Tf-hJ-oj2">
                                                 <rect key="frame" x="170.66666666666666" y="7" width="34" height="30"/>
                                                 <state key="normal" title="Crop">
-                                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="titleColor" systemColor="darkTextColor"/>
                                                 </state>
                                                 <connections>
                                                     <action selector="crop:" destination="S11-TT-8A3" eventType="touchUpInside" id="Jeq-rj-sPq"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yS8-Kv-A5S">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yS8-Kv-A5S">
                                                 <rect key="frame" x="264" y="7" width="45" height="30"/>
                                                 <state key="normal" title="Rotate">
-                                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="titleColor" systemColor="darkTextColor"/>
                                                 </state>
                                                 <connections>
                                                     <action selector="rotate:" destination="S11-TT-8A3" eventType="touchUpInside" id="JCq-H4-zf0"/>
@@ -201,4 +201,9 @@
             <point key="canvasLocation" x="32.799999999999997" y="832.53373313343332"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="darkTextColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
