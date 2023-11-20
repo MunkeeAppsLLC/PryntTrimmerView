@@ -124,15 +124,18 @@ fileprivate class PositionBar: UIView {
         setupGestures()
         updateMainColor()
         updateHandleColor()
-
+        bringSubviewToFront(trimView)
+        bringSubviewToFront(leftHandleView)
+        bringSubviewToFront(rightHandleView)
+        bringSubviewToFront(positionBar)
     }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
         assetPreview.layer.cornerRadius = 16
         trimView.layer.cornerRadius = 16
-        leftMaskView.addRoundedCorners(.left, cornerRadius: 16)
-        rightMaskView.addRoundedCorners(.right, cornerRadius: 16)
+        leftMaskView.addOppositeRoundedCorners(.left, cornerRadius: 16)
+        rightMaskView.addOppositeRoundedCorners(.right, cornerRadius: 16)
     }
 
     override func constrainAssetPreview() {
@@ -214,7 +217,7 @@ fileprivate class PositionBar: UIView {
         leftMaskView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         leftMaskView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         leftMaskView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        leftMaskView.rightAnchor.constraint(equalTo: leftHandleView.centerXAnchor).isActive = true
+        leftMaskView.rightAnchor.constraint(equalTo: leftHandleView.leftAnchor, constant: 16).isActive = true
       
         rightMaskView.isUserInteractionEnabled = false
         rightMaskView.backgroundColor = .white
@@ -225,7 +228,7 @@ fileprivate class PositionBar: UIView {
         rightMaskView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         rightMaskView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         rightMaskView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        rightMaskView.leftAnchor.constraint(equalTo: rightHandleView.centerXAnchor).isActive = true
+        rightMaskView.leftAnchor.constraint(equalTo: rightHandleView.rightAnchor, constant: -16).isActive = true
     }
 
     private func setupPositionBar() {
@@ -470,32 +473,25 @@ extension UIView {
         case right
     }
     
-    func addRoundedCorners(_ side: RoundedCornerSide, cornerRadius: CGFloat) {
+    func addOppositeRoundedCorners(_ side: RoundedCornerSide, cornerRadius: CGFloat) {
         let maskLayer = CAShapeLayer()
-        maskLayer.frame = self.bounds
+        let roundingCorners: UIRectCorner = side == .left ? [.topLeft, .bottomLeft] : [.topRight, .bottomRight]
         
-        let path = CGMutablePath()
-        let width = self.bounds.width
-        let height = self.bounds.height
+        let mainPathFrame = side == .left ?
+        CGRect(origin: self.bounds.origin, size: CGSize(width: self.bounds.size.width, height: self.bounds.size.height)) :
+        CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: self.bounds.size.width, height: self.bounds.size.height))
         
-        switch side {
-            case .left:
-                path.addArc(center: CGPoint(x: cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: CGFloat.pi, endAngle: CGFloat.pi * 1.5, clockwise: false)
-                path.addLine(to: CGPoint(x: width, y: 0))
-                path.addLine(to: CGPoint(x: width, y: height))
-                path.addLine(to: CGPoint(x: cornerRadius, y: height))
-                path.addArc(center: CGPoint(x: cornerRadius, y: height - cornerRadius), radius: cornerRadius, startAngle: CGFloat.pi * 0.5, endAngle: CGFloat.pi, clockwise: false)
-            case .right:
-                path.move(to: CGPoint(x: 0, y: 0))
-                path.addLine(to: CGPoint(x: width - cornerRadius, y: 0))
-                path.addArc(center: CGPoint(x: width - cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: CGFloat.pi * 1.5, endAngle: 0, clockwise: false)
-                path.addLine(to: CGPoint(x: width, y: height - cornerRadius))
-                path.addArc(center: CGPoint(x: width - cornerRadius, y: height - cornerRadius), radius: cornerRadius, startAngle: 0, endAngle: CGFloat.pi * 0.5, clockwise: false)
-                path.addLine(to: CGPoint(x: 0, y: height))
-        }
+        let roundedPath = UIBezierPath(roundedRect: mainPathFrame, byRoundingCorners: roundingCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         
-        path.closeSubpath()
-        maskLayer.path = path
+        let subtractPathFrame: CGRect = side == .left ?
+        CGRect(x: self.bounds.width - cornerRadius * 0.5 + 3, y: 0, width: cornerRadius, height: self.bounds.height) :
+        CGRect(x: -cornerRadius * 0.5 - 3, y: 0, width: cornerRadius, height: self.bounds.height)
+        
+        let subtractingPath = UIBezierPath(roundedRect: subtractPathFrame, byRoundingCorners: roundingCorners, cornerRadii: CGSize(width: cornerRadius - 5, height: cornerRadius - 5))
+        
+        roundedPath.append(subtractingPath.reversing())
+        maskLayer.path = roundedPath.cgPath
+        maskLayer.fillRule = CAShapeLayerFillRule.evenOdd
         self.layer.mask = maskLayer
     }
 }
