@@ -95,4 +95,6 @@ public class AVAssetTimeSelector: UIView, UIScrollViewDelegate {
             (CGFloat(time.timescale) * CGFloat(asset.duration.value))
         return timeRatio * durationSize
     }
+    
+    
 }
