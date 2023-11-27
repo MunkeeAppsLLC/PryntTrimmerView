@@ -21,6 +21,7 @@ protocol TrimRepresentationDelegate: NSObject {
 
 public class TrimRepresentationView: UIView {
     weak var delegate: TrimRepresentationDelegate?
+    private let uiConfiguration: TrimmerViewUIConfiguration
     private let leftHandleView: HandleView = .init(position: .left)
     private let rightHandleView: HandleView = .init(position: .right)
     private let trimmedAreaView: UIView = .init()
@@ -49,7 +50,8 @@ public class TrimRepresentationView: UIView {
         frame.minX...frame.maxX
     }
     
-    override init(frame: CGRect) {
+    init(uiConfiguration: TrimmerViewUIConfiguration) {
+        self.uiConfiguration = uiConfiguration
         super.init(frame: .zero)
         setupViews()
     }
@@ -74,7 +76,7 @@ public class TrimRepresentationView: UIView {
         trimmedAreaView.clipsToBounds = true
         trimmedAreaView.translatesAutoresizingMaskIntoConstraints = false
         trimmedAreaView.layer.borderWidth = 3
-        trimmedAreaView.layer.borderColor = UIColor.white.cgColor
+        trimmedAreaView.layer.borderColor = uiConfiguration.mainColor.cgColor
         
         addSubview(trimmedAreaView)
         
@@ -86,12 +88,12 @@ public class TrimRepresentationView: UIView {
         
         NSLayoutConstraint.activate([
             leftHandleView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.66),
-            leftHandleView.widthAnchor.constraint(equalToConstant: 10),
+            leftHandleView.widthAnchor.constraint(equalToConstant: uiConfiguration.handleWidth),
             leftHandleView.centerXAnchor.constraint(equalTo: trimmedAreaView.leadingAnchor),
             leftHandleView.centerYAnchor.constraint(equalTo: centerYAnchor),
             
             rightHandleView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.66),
-            rightHandleView.widthAnchor.constraint(equalToConstant: 10),
+            rightHandleView.widthAnchor.constraint(equalToConstant: uiConfiguration.handleWidth),
             rightHandleView.centerXAnchor.constraint(equalTo: trimmedAreaView.trailingAnchor),
             rightHandleView.centerYAnchor.constraint(equalTo: centerYAnchor),
             
@@ -173,7 +175,7 @@ public class TrimRepresentationView: UIView {
     }
     
     private func setupMaskLayer() {
-        maskLayer.fillColor = UIColor.black.withAlphaComponent(0.5).cgColor
+        maskLayer.fillColor = uiConfiguration.maskColor.withAlphaComponent(0.5).cgColor
         maskLayer.fillRule = .evenOdd
         maskLayer.cornerRadius = 16
         maskingView.layer.addSublayer(maskLayer)

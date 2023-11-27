@@ -18,40 +18,26 @@ public protocol TrimmerScrollDelegate: AnyObject {
     func scrollDidMove(_ contentOffset: CGPoint)
 }
 
+public struct TrimmerViewUIConfiguration {
+    var mainColor: UIColor = .black
+    var handleColor: UIColor = .white
+    var positionBarColor: UIColor = .white
+    var maskColor: UIColor = .black
+    var handleWidth: CGFloat = 10
+    
+    public init(mainColor: UIColor = .black, handleColor: UIColor = .white, positionBarColor: UIColor = .white, maskColor: UIColor = .black, handleWidth: CGFloat = 10) {
+        self.mainColor = mainColor
+        self.handleColor = handleColor
+        self.positionBarColor = positionBarColor
+        self.maskColor = maskColor
+        self.handleWidth = handleWidth
+    }
+}
 
 @IBDesignable public class TrimmerView: AVAssetTimeSelector {
 
-    // MARK: Color Customization
-
-    /// The color of the main border of the view
-    @IBInspectable public var mainColor: UIColor = UIColor.black {
-        didSet {
-//            updateMainColor()
-        }
-    }
-
-    /// The color of the handles on the side of the view
-    @IBInspectable public var handleColor: UIColor = UIColor.white {
-        didSet {
-//           updateHandleColor()
-        }
-    }
-
-    /// The color of the position indicator
-    @IBInspectable public var positionBarColor: UIColor = UIColor.white {
-        didSet {
-            positionBar.backgroundColor = positionBarColor
-        }
-    }
-
-    /// The color used to mask unselected parts of the video
-    @IBInspectable public var maskColor: UIColor = UIColor.white {
-        didSet {
-//            leftMaskView.backgroundColor = maskColor
-//            rightMaskView.backgroundColor = maskColor
-        }
-    }
-
+    var uiConfiguration: TrimmerViewUIConfiguration = .init()
+    
     // MARK: Interface
 
     public weak var delegate: TrimmerViewDelegate?
@@ -60,15 +46,13 @@ public protocol TrimmerScrollDelegate: AnyObject {
     // MARK: Subviews
 
     private let positionBar = TimeBar()
-    private let trimRepresentation = TrimRepresentationView()
+    private let trimRepresentation: TrimRepresentationView
     private let timestampScrollView = TimestampScrollView()
 
     // MARK: Constraints
 
     private var currentPositionConstraint: CGFloat = 0
     private var positionConstraint: NSLayoutConstraint?
-
-    public let handleWidth: CGFloat = 10
 
     public override var maxDuration: Double {
         didSet {
@@ -77,7 +61,17 @@ public protocol TrimmerScrollDelegate: AnyObject {
     }
     
     public var minDuration: Double = 3
-
+    
+    public init(uiConfiguration: TrimmerViewUIConfiguration) {
+        self.uiConfiguration = uiConfiguration
+        self.trimRepresentation = TrimRepresentationView(uiConfiguration: uiConfiguration)
+        super.init(frame: .zero)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - View & constraints configurations
 
     override func setupSubviews() {
@@ -114,7 +108,7 @@ public protocol TrimmerScrollDelegate: AnyObject {
     }
     
     private func setupPositionBar() {
-        positionBar.backgroundColor = positionBarColor
+        positionBar.backgroundColor = uiConfiguration.positionBarColor
         positionBar.layer.cornerRadius = 2
         positionBar.translatesAutoresizingMaskIntoConstraints = false
         positionBar.isUserInteractionEnabled = true

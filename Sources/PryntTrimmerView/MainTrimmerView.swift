@@ -12,7 +12,7 @@ import AVFoundation
 public class MainTrimmerView: UIView {
 
     private lazy var trimmerView: TrimmerView = {
-        let trimmer = TrimmerView(frame: CGRect.zero)
+        let trimmer = TrimmerView(uiConfiguration: .init())
         trimmer.translatesAutoresizingMaskIntoConstraints = false
         trimmer.scrollDelegate = self
         addSubview(trimmer)
@@ -86,8 +86,8 @@ public class MainTrimmerView: UIView {
         trimmerView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         trimmerView.heightAnchor.constraint(equalToConstant: 60).isActive = true
 
-        timestampScroll.leadingAnchor.constraint(equalTo: leadingAnchor, constant: trimmerView.handleWidth).isActive = true
-        timestampScroll.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -trimmerView.handleWidth).isActive = true
+        timestampScroll.leadingAnchor.constraint(equalTo: leadingAnchor, constant: trimmerView.uiConfiguration.handleWidth).isActive = true
+        timestampScroll.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -trimmerView.uiConfiguration.handleWidth).isActive = true
         timestampScroll.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         timestampScroll.heightAnchor.constraint(equalToConstant: 30).isActive = true
     }
