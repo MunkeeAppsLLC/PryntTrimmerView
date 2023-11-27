@@ -144,8 +144,8 @@ public protocol TrimmerScrollDelegate: AnyObject {
             updateSelectedTime(stoppedMoving: false)
         case .changed:
             let translation = gestureRecognizer.translation(in: superView)
-            let maxConstraint = trimRepresentation.endTimePosition - handleWidth * 0.5 - 4
-            let minConstraint: CGFloat = trimRepresentation.startTimePosition + handleWidth * 0.5
+            let maxConstraint = trimRepresentation.editablePositionRange.upperBound
+                let minConstraint: CGFloat = trimRepresentation.editablePositionRange.lowerBound
 
             let translatedConstraint = currentPositionConstraint + translation.x
             var newConstraint = translatedConstraint
@@ -208,22 +208,20 @@ public protocol TrimmerScrollDelegate: AnyObject {
         print("seek time: \(time.seconds)")
         if let newPosition = getPosition(from: time) {
             let offsetPosition = newPosition - assetPreview.contentOffset.x
-            let maxPosition = trimRepresentation.endTimePosition
+            let maxPosition = trimRepresentation.editablePositionRange.upperBound
             let normalizedPosition = min(max(0, offsetPosition), maxPosition)
             positionConstraint?.constant = normalizedPosition
         }
     }
     
     public func seekToStartTime() {
-        let startTimePosition = trimRepresentation.startTimePosition
-        positionConstraint?.constant = startTimePosition + handleWidth * 0.5
-//        setNeedsUpdateConstraints()
+        let startTimePosition = trimRepresentation.editablePositionRange.lowerBound
+        positionConstraint?.constant = startTimePosition
     }
     
     public func seekToEndTime() {
-        let startTimePosition = trimRepresentation.endTimePosition
-        positionConstraint?.constant = startTimePosition - handleWidth * 0.5 - 4
-//        setNeedsUpdateConstraints()
+        let startTimePosition = trimRepresentation.editablePositionRange.upperBound
+        positionConstraint?.constant = startTimePosition
     }
     
     override func getPosition(from time: CMTime) -> CGFloat? {
@@ -236,21 +234,18 @@ public protocol TrimmerScrollDelegate: AnyObject {
     }
     
     override var durationSize: CGFloat {
-        let value = super.durationSize - handleWidth
-        return value
+        return trimRepresentation.availableEditableRange.upperBound - trimRepresentation.availableEditableRange.lowerBound
     }
 
     /// The selected start time for the current asset.
     public var startTime: CMTime? {
-        let startPosition = trimRepresentation.startTimePosition + assetPreview.contentOffset.x + handleWidth * 0.5
-//        print(startPosition)
+        let startPosition = trimRepresentation.editablePositionRange.lowerBound + assetPreview.contentOffset.x
         return getTime(from: startPosition)
     }
 
     /// The selected end time for the current asset.
     public var endTime: CMTime? {
-        let endPosition = trimRepresentation.endTimePosition + assetPreview.contentOffset.x - handleWidth * 0.5
-//        print(endPosition)
+        let endPosition = trimRepresentation.editablePositionRange.upperBound + assetPreview.contentOffset.x
         return getTime(from: endPosition)
     }
 
@@ -266,8 +261,17 @@ public protocol TrimmerScrollDelegate: AnyObject {
     }
 
     private var positionBarTime: CMTime? {
-        let barPosition = positionBar.frame.origin.x + assetPreview.contentOffset.x
+        let barPosition = positionBar.frame.origin.x - trimRepresentation.availableEditableRange.lowerBound + assetPreview.contentOffset.x
         return getTime(from: barPosition)
+    }
+    
+    override func getTime(from position: CGFloat) -> CMTime? {
+        guard let asset = asset else {
+            return nil
+        }
+        let normalizedRatio = max(min(1, position / durationSize), 0)
+        let positionTimeValue = Double(normalizedRatio) * Double(asset.duration.value)
+        return CMTime(value: Int64(positionTimeValue), timescale: asset.duration.timescale)
     }
 
     private var minimumDistanceBetweenHandle: CGFloat {
@@ -286,18 +290,19 @@ public protocol TrimmerScrollDelegate: AnyObject {
             updateSelectedTime(stoppedMoving: false)
         }
     }
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateSelectedTime(stoppedMoving: false)
         scrollDelegate?.scrollDidMove(scrollView.contentOffset)
     }
     
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hitFrame = bounds.insetBy(dx: -5, dy: -10)
+        let hitFrame = bounds.insetBy(dx: -10, dy: -10)
         return hitFrame.contains(point) ? super.hitTest(point, with: event) : nil
     }
     
     public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        let hitFrame = bounds.insetBy(dx: -5, dy: -10)
+        let hitFrame = bounds.insetBy(dx: -10, dy: -10)
         return hitFrame.contains(point)
     }
 }
@@ -308,13 +313,13 @@ extension TrimmerView: TrimRepresentationDelegate {
             guard change >= 0 else {
                 return false
             }
-            let distanceBetweenHandles = trimRepresentation.endTimePosition - change
+            let distanceBetweenHandles = trimRepresentation.editablePositionRange.upperBound - change
             return distanceBetweenHandles >= minimumDistanceBetweenHandle
         } else {
-            guard change <= assetPreview.bounds.size.width else {
+            guard change <= trimRepresentation.availableEditableRange.upperBound else {
                 return false
             }
-            let distanceBetweenHandles = change - trimRepresentation.startTimePosition
+            let distanceBetweenHandles = change - trimRepresentation.editablePositionRange.lowerBound
             return distanceBetweenHandles >= minimumDistanceBetweenHandle
         }
     }
@@ -324,12 +329,12 @@ extension TrimmerView: TrimRepresentationDelegate {
             guard change >= 0 else {
                 return 0
             }
-            return trimRepresentation.endTimePosition - minimumDistanceBetweenHandle
+            return trimRepresentation.editablePositionRange.upperBound - minimumDistanceBetweenHandle
         } else {
-            guard change <= assetPreview.bounds.size.width else {
-                return assetPreview.bounds.size.width
+            guard change <= trimRepresentation.availableEditableRange.upperBound else {
+                return trimRepresentation.availableEditableRange.upperBound
             }
-            return trimRepresentation.startTimePosition + minimumDistanceBetweenHandle
+            return trimRepresentation.editablePositionRange.lowerBound + minimumDistanceBetweenHandle
         }
     }
     

@@ -41,12 +41,12 @@ public class TrimRepresentationView: UIView {
         }
     }
     
-    var startTimePosition: CGFloat {
-        return leftHandleView.center.x
+    var editablePositionRange: ClosedRange<CGFloat> {
+        return leftHandleView.center.x...rightHandleView.center.x
     }
     
-    var endTimePosition: CGFloat {
-        return rightHandleView.center.x
+    var availableEditableRange: ClosedRange<CGFloat> {
+        frame.minX...frame.maxX
     }
     
     override init(frame: CGRect) {
@@ -128,9 +128,9 @@ public class TrimRepresentationView: UIView {
         switch gestureRecognizer.state {
             case .began:
                 if isLeftGesture {
-                    currentLeftPosition = leadingConstraint!.constant
+                    currentLeftPosition = editablePositionRange.lowerBound
                 } else {
-                    currentRightPosition = trailingConstraint!.constant
+                    currentRightPosition = editablePositionRange.upperBound
                 }
             case .changed:
                 let translation = gestureRecognizer.translation(in: superview)
@@ -162,10 +162,10 @@ public class TrimRepresentationView: UIView {
     private func updateRightHandle(translation: CGPoint) {
         let change = currentRightPosition + translation.x
         
-        if delegate?.canTrim(edge: .right, change: change + bounds.width) == true {
-            trailingConstraint?.constant = change
+        if delegate?.canTrim(edge: .right, change: change) == true {
+            trailingConstraint?.constant = change - self.bounds.width
             delegate?.trim(edge: .right, change: change)
-        } else if let max = delegate?.trimSnapPosition(edge: .right, change: change + bounds.width) {
+        } else if let max = delegate?.trimSnapPosition(edge: .right, change: change) {
             let trailing = max - self.bounds.width
             trailingConstraint?.constant = trailing
             delegate?.trim(edge: .right, change: trailing)
@@ -244,12 +244,12 @@ class HandleView: UIView {
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hitFrame = CGRect(x: position == .left ? -bounds.width * 0.5 : 0, y: -bounds.height * 0.2, width: bounds.width * 1.5, height: bounds.height * 1.4)
+        let hitFrame = CGRect(x: position == .left ? -bounds.width * 0.5 : 0, y: -bounds.height * 0.5, width: bounds.width * 1.5, height: bounds.height * 1.5)
         return hitFrame.contains(point) ? self : nil
     }
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        let hitFrame = CGRect(x: position == .left ? -bounds.width * 0.5 : 0, y: -bounds.height * 0.2, width: bounds.width * 1.5, height: bounds.height * 1.4)
+        let hitFrame = CGRect(x: position == .left ? -bounds.width * 0.5 : 0, y: -bounds.height * 0.5, width: bounds.width * 1.5, height: bounds.height * 1.5)
         return hitFrame.contains(point)
     }
 }
