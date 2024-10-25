@@ -60,8 +60,8 @@ public class AVAssetTimeSelector: UIView, UIScrollViewDelegate {
     }
 
     func constrainAssetPreview() {
-        assetPreview.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        assetPreview.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        assetPreview.leftAnchor.constraint(equalTo: leftAnchor, constant: 5).isActive = true
+        assetPreview.rightAnchor.constraint(equalTo: rightAnchor, constant: -5).isActive = true
         assetPreview.topAnchor.constraint(equalTo: topAnchor).isActive = true
         assetPreview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
